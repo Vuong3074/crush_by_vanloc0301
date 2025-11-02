@@ -9,8 +9,7 @@ const textConfig = {
   text8: "Gửi cho tớ di <3",
   text9: "Vì tớ đẹp try vlllll",
   text10: "Iu Vk quá luôn ó",
-  text11:
-    "Lấy tớ lun nha Bx :DDDDDDDDDDDDD",
+  text11: "Lấy tớ lun nha Bx :DDDDDDDDDDDDD",
   text12: "Okii lunn <3",
 };
 
@@ -44,6 +43,7 @@ $(document).ready(function () {
       $(".content").show(200);
     });
   }
+
   // switch button position
   function switchButton() {
     var audio = new Audio("sound/duck.mp3");
@@ -57,7 +57,8 @@ $(document).ready(function () {
     $("#yes").css("left", leftNo);
     $("#yes").css("top", topNO);
   }
-  // move random button póition
+
+  // move random button position
   function moveButton() {
     var audio = new Audio("sound/Swish1.mp3");
     audio.play();
@@ -68,10 +69,10 @@ $(document).ready(function () {
       var x = Math.random() * 500;
       var y = Math.random() * 500;
     }
-    var left = x + "px";
-    var top = y + "px";
-    $("#no").css("left", left);
-    $("#no").css("top", top);
+    $("#no").css({
+      left: x + "px",
+      top: y + "px",
+    });
   }
 
   var n = 0;
@@ -84,26 +85,6 @@ $(document).ready(function () {
     if (screen.width >= 900) switchButton();
   });
 
-  // generate text in input
-  function textGenerate() {
-    var n = "";
-    var text = " " + textConfig.text9;
-    var a = Array.from(text);
-    var textVal = $("#txtReason").val() ? $("#txtReason").val() : "";
-    var count = textVal.length;
-    if (count > 0) {
-      for (let i = 1; i <= count; i++) {
-        n = n + a[i];
-        if (i == text.length + 1) {
-          $("#txtReason").val("");
-          n = "";
-          break;
-        }
-      }
-    }
-    $("#txtReason").val(n);
-  }
-
   // show popup
   $("#yes").click(function () {
     var audio = new Audio("sound/tick.mp3");
@@ -113,19 +94,16 @@ $(document).ready(function () {
       html: true,
       width: 900,
       padding: "3em",
-      html: "<input type='text' class='form-control' id='txtReason'  placeholder='Whyyy'>",
+      html: "<input type='text' class='form-control' id='txtReason' placeholder='Whyyy'>",
       background: '#fff url("img/iput-bg.jpg")',
       backdrop: `
-                    rgba(0,0,123,0.4)
-                    url("img/giphy2.gif")
-                    left top
-                    no-repeat
-                  `,
+        rgba(0,0,123,0.4)
+        url("img/giphy2.gif")
+        left top
+        no-repeat
+      `,
       showCancelButton: false,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
       confirmButtonColor: "#fe8a71",
-      cancelButtonColor: "#f6cd61",
       confirmButtonText: textConfig.text8,
     }).then((result) => {
       if (result.value) {
@@ -143,13 +121,19 @@ $(document).ready(function () {
       }
     });
 
-    $("#txtReason").focus(function () {
-      var handleWriteText = setInterval(function () {
-        textGenerate();
-      }, 10);
-      $("#txtReason").blur(function () {
-        clearInterval(handleWriteText);
-      });
+    // Khi người dùng gõ vào input
+    $(document).on("input", "#txtReason", function () {
+      let target = textConfig.text9;
+      let currentLength = $(this).val().length;
+
+      // Ghi đè ký tự người dùng bằng ký tự tương ứng trong text9
+      $(this).val(target.substring(0, currentLength));
+
+      // Nếu đã gõ hết câu -> khóa input
+      if (currentLength >= target.length) {
+        $(this).val(target);
+        $(this).prop("disabled", true);
+      }
     });
   });
 });
